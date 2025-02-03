@@ -97,7 +97,8 @@ document your observations.
 
 ``` r
 ## TASK: Plot `price` vs `carat` below
-ggplot(diamonds) +
+diamonds %>% 
+  ggplot() +
   geom_point(aes(x = carat, y = price))
 ```
 
@@ -112,7 +113,8 @@ ggplot(diamonds) +
 
 ``` r
 ## TASK: Plot `price`, `carat`, and `cut` below
-ggplot(diamonds) +
+diamonds %>% 
+  ggplot() +
   geom_point(aes(x = carat, y = price, color = cut))
 ```
 
@@ -121,9 +123,9 @@ ggplot(diamonds) +
 **Observations**:
 
 - Price generally increases with carat
-- Cut accounts for the difference in price of the same sized carat.
-  Better cut diamonds tend to cost more than their worse cut counter
-  parts of the same carat.
+- Cut accounts for some of the difference in price of the same sized
+  carat. Better cut diamonds tend to cost more than their worse cut
+  counter parts of the same carat.
 
 # Communication
 
