@@ -1,7 +1,7 @@
 RMS Titanic
 ================
-(Your name here)
-2020-
+Maya Cranor
+2025
 
 - [Grading Rubric](#grading-rubric)
   - [Individual](#individual)
@@ -277,10 +277,10 @@ df_prop %>%
   across all classes for adults were higher than the highest proportion
   of men. All children that are in the 1st and 2nd class survived, and a
   bit less than half of the children in 3rd class survived. Part of that
-  could be explained by there being way more children in 3rd class than
-  1st and 2nd, so there were more overall children that had to be saved.
-  From this it appears that woman and children survived more than adult
-  males.  
+  could be explained by there being only 30 children total between 1st
+  and 2nd class and 79 children total for 3rd class, so there were more
+  overall children that had to be saved in 3rd class. From this it
+  appears that woman and children survived more than adult males.  
 - If you saw something *fishy* in q4 above, use your new plot to explain
   the fishy-ness.
   - This graph separates out age from the q4 graph. Now adult and
