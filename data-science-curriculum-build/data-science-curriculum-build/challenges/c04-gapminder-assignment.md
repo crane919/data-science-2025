@@ -214,7 +214,7 @@ can.
 gapminder %>% 
   filter(year == 1952) %>% 
   ggplot(aes(x = continent , y = gdpPercap)) +
-  geom_jitter() 
+  geom_jitter(height=0)
 ```
 
 ![](c04-gapminder-assignment_files/figure-gfm/q2-task-1.png)<!-- -->
@@ -224,7 +224,7 @@ gapminder %>%
 gapminder %>% 
   filter(year == 1952, gdpPercap < 90000) %>% 
   ggplot(aes(x = continent , y = gdpPercap)) +
-  geom_jitter() 
+  geom_jitter(height=0)
 ```
 
 ![](c04-gapminder-assignment_files/figure-gfm/q2-task-2.png)<!-- -->
@@ -360,13 +360,14 @@ variables; think about using different aesthetics or facets.
 gapminder %>% 
   filter(year == 1952 | year == 2007) %>% 
   ggplot(aes(x = continent , y = gdpPercap)) +
-  geom_jitter(
+  geom_jitter(height=0,
+              width=.35,
     data = . %>% 
       mutate(
         country = case_when(
           country %in% c("Kuwait", "Switzerland", "United States") ~ country,
           TRUE ~ "(other)"
-        )
+          )
       ),
     mapping = aes(color = country)
   ) +
@@ -385,8 +386,11 @@ gapminder %>%
 
 **Observations**:
 
-- Overall lots of countries have increased their gdpPercap, likely due
-  to inflation.
+- Overall lots of countries have increased their gdpPercap, this is
+  likely due to a multitude of factors including inflation and
+  productivity increases that started in the 1950s. The productivity
+  increases were caused by technological advances, and increased
+  automation. (<https://www.bls.gov/opub/mlr/1993/11/art1full.pdf>)
 - Kuwait has dramatically decreased its gpdPercap from 108382.35 to
   47306.99, and is no longer an extreme outlier as it no longer has the
   highest gpdPercap and there are several countries with similar values.
@@ -433,7 +437,7 @@ gapminder %>%
 gapminder %>% 
   filter(year == 1952 | year == 2007) %>% 
   ggplot(aes(x = continent , y = pop)) +
-  geom_jitter(
+  geom_jitter( height=0,
     data = . %>% 
       mutate(
         country = case_when(
@@ -466,6 +470,7 @@ gapminder %>%
     )
   ) +
   facet_wrap(~ year) +
+  scale_y_log10() +
   labs(color = "Country/Line")
 ```
 
@@ -489,7 +494,7 @@ gapminder %>%
 gapminder %>% 
   filter(country == "Kuwait" ) %>% 
   ggplot(aes(x = year , y = gdpPercap)) +
-  geom_jitter() 
+  geom_point()
 ```
 
 ![](c04-gapminder-assignment_files/figure-gfm/q5-task3-1.png)<!-- -->
