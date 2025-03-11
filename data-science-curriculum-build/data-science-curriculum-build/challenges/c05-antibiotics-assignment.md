@@ -194,7 +194,7 @@ is Gram positive or negative.
 long_df_antibiotics %>% 
   ggplot(aes(x = bacteria, y = MIC, fill = antibiotic)) +
   geom_col(position = "dodge") +
-  facet_wrap(~gram, drop = TRUE) + 
+  facet_wrap(~gram, scales = "free_x") + 
   scale_y_log10() + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
@@ -206,7 +206,7 @@ long_df_antibiotics %>%
 long_df_antibiotics %>% 
   ggplot(aes(x = bacteria, y = MIC *1000, fill = antibiotic)) + 
   geom_col(position = "dodge") +
-  facet_wrap(~gram, , drop = TRUE) +
+  facet_wrap(~gram, scales = "free_x") +
   scale_y_log10(labels = \(x) x /1000) + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
@@ -224,15 +224,12 @@ Note that your visual must be *qualitatively different* from *all* of
 your other visuals.
 
 ``` r
-# WRITE YOUR CODE HERE
-
-# On an adjusted log scale to that values don't appear negative
 long_df_antibiotics %>% 
-  ggplot(aes(x = bacteria, y = MIC * 1000, color = antibiotic, shape = factor(gram == "positive"))) +
+  ggplot(aes(x = bacteria, y = MIC, color = antibiotic, shape = factor(gram == "positive"))) +
   geom_point() +
-  scale_y_log10(labels = function(x) x / 1000) +
+  scale_y_log10() +
   scale_shape_manual(values = c(16, 3)) +
-  geom_hline(yintercept = 0.1 * 1000, linetype = "dashed", color = "black") +
+  geom_hline(yintercept = 0.1, linetype = "dashed", color = "black") +
   labs(shape = "Gram") + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
@@ -251,12 +248,12 @@ your other visuals.
 ``` r
 # WRITE YOUR CODE HERE
 long_df_antibiotics %>% 
-  ggplot(aes(x = antibiotic, y = MIC * 1000, color = gram)) + 
+  ggplot(aes(x = antibiotic, y = MIC, color = gram)) + 
   geom_jitter(height=0,
               width=.2,) +
-  scale_y_log10(labels = function(x) x / 1000) +
+  scale_y_log10() +
   scale_shape_manual(values = c(16, 3)) +
-  geom_hline(yintercept = 0.1 * 1000, linetype = "dashed", color = "black") +
+  geom_hline(yintercept = 0.1, linetype = "dashed", color = "black") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
@@ -272,7 +269,20 @@ Note that your visual must be *qualitatively different* from *all* of
 your other visuals.
 
 ``` r
-# WRITE YOUR CODE HERE
+long_df_antibiotics %>% 
+  ggplot(aes(x = antibiotic, y = MIC, fill = gram)) + 
+  geom_col(position = "dodge") +
+  geom_hline(yintercept = 0.1, linetype = "dashed", color = "black") +
+  facet_wrap(~bacteria) +
+  scale_y_log10()+ 
+ theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        strip.text = element_text(size = 7))
+```
+
+![](c05-antibiotics-assignment_files/figure-gfm/q1.4-1.png)<!-- -->
+
+``` r
+# On an adjusted log scale to that values don't appear negative
 long_df_antibiotics %>% 
   ggplot(aes(x = antibiotic, y = MIC *1000, fill = gram)) + 
   geom_col(position = "dodge") +
@@ -283,7 +293,7 @@ long_df_antibiotics %>%
         strip.text = element_text(size = 7))
 ```
 
-![](c05-antibiotics-assignment_files/figure-gfm/q1.4-1.png)<!-- -->
+![](c05-antibiotics-assignment_files/figure-gfm/q1.4-2.png)<!-- -->
 
 #### Visual 5 (Some variables)
 
@@ -295,13 +305,15 @@ Note that your visual must be *qualitatively different* from *all* of
 your other visuals.
 
 ``` r
-# WRITE YOUR CODE HERE
-long_df_antibiotics %>% 
-  ggplot(aes(x = bacteria, y = MIC * 1000, color = gram)) + 
+df_antibiotics %>%
+  ggplot(aes(x = streptomycin, y = penicillin, color = gram)) + 
   geom_point() +
-  scale_y_log10(labels = function(x) x / 1000) +
+  scale_x_log10() +
+  scale_y_log10() +
   scale_shape_manual(values = c(16, 3)) +
-  geom_hline(yintercept = 0.1 * 1000, linetype = "dashed", color = "black") +
+  geom_hline(yintercept = 0.1, linetype = "dashed", color = "black") +
+  geom_text_repel(aes(label = bacteria), size = 3, box.padding = 0.5, point.padding = 0.5) + 
+  labs(x = "Streptomycin", y = "Penicillin") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
@@ -339,7 +351,7 @@ response here) - Why? - (Write your response here)
   the acceptable range of 0.1.
 
 - Neomycin is the most effective of the antibiotics as it below the MIC
-  threshold for 8 bacteria’s while penicillin has 6 and streptomycin
+  threshold for 9 bacteria’s while penicillin has 6 and streptomycin
   does 4.
 
 - Visual 3 were the most effective at making these observations.
@@ -350,6 +362,16 @@ response here) - Why? - (Write your response here)
 
   - Visual 3 groups together the different antibiotics, which makes it
     easier to track trends happening between them.
+
+  ``` r
+  df_antibiotics %>% count(neomycin <= 0.1)
+  ```
+
+      ## # A tibble: 2 × 2
+      ##   `neomycin <= 0.1`     n
+      ##   <lgl>             <int>
+      ## 1 FALSE                 7
+      ## 2 TRUE                  9
 
 #### Guiding Question 2
 
@@ -382,6 +404,14 @@ response here) - Why? - (Write your response here)
     it on a closer level. Since we just need to compare a few bacteria’s
     against each other, being able to isolate it while looking at the
     visual is important.
+
+- I recreated visual 5, and it is also highly effective at answering
+  this question
+
+  - Diplococcus pneumoniae, Streptococcus hemolyticus, and Streptococcus
+    viridans are grouped together in the right corner, because they have
+    very simialr values, while Streptococcus fecalis (which was renamed
+    is not near that group).
 
 # References
 
