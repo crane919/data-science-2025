@@ -153,8 +153,7 @@ Answer the questions below.
 ```{r q2-task}
 ## TASK: Finish implementing this function
 stat <- function(x, y) {
-  map2_dbl(x, y, ~as.integer(.x^2 + .y^2 <= 1)) %>% 
-    mean() * 4
+  map2_dbl(x, y, ~as.integer(.x^2 + .y^2 <= 1)) *4
 }
 ```
 
@@ -199,7 +198,8 @@ Using your data in `df_q1`, estimate $\pi$.
 ```{r q3-task}
 ## TASK: Estimate pi using your data from q1
 df_q3 <- df_q1 %>%
-  summarise(pi_est = stat(x, y))
+  mutate(pi_piece = stat(x,y)) %>%
+  summarise(pi_est = mean(pi_piece))
 df_q3
 ```
 
@@ -241,7 +241,8 @@ df_q4 <-
       splits,
       function(split_df) {
         analysis(split_df) %>% 
-          summarise(pi_est = stat(x, y)) %>% 
+          mutate(pi_piece = stat(x,y)) %>%
+          summarise(pi_est = mean(pi_piece)) %>%
           pull(pi_est)
       }
     )
@@ -281,8 +282,8 @@ alpha <- 0.05
 df_q5 <- 
   df_q4 %>% 
   summarize(
-    pi_lo = quantile(pi_est, probs = alpha / 2),  
-    pi_up = quantile(pi_est, probs = 1 - alpha / 2)
+    pi_lo = quantile(pi_est, probs = alpha/2),
+    pi_up = quantile(pi_est, probs = 1 - alpha/2)
   )
 
 print(df_q5)
@@ -302,10 +303,17 @@ Compute a CLT-based confidence interval for $\pi$ at the 95% confidence level (`
 alpha <- 0.05
 
 # Compute the CLT-based confidence interval for pi
-df_q6 <- df_q4 %>%
+df_q6 <- df_q1 %>%
+  mutate(stat = stat(x, y)) %>%
   summarize(
-    pi_lo = mean(pi_est) - qnorm(1 - alpha / 2) * sd(pi_est) / sqrt(n()),  # Lower bound
-    pi_up = mean(pi_est) + qnorm(1 - alpha / 2) * sd(pi_est) / sqrt(n())   # Upper bound
+    mean = mean(stat),
+    sd = sd(stat),
+    n = n()
+  ) %>%
+  mutate(
+    se = sd / sqrt(n),
+    pi_lo = mean - qnorm( 1 - (alpha) / 2 ) * se,
+    pi_up = mean + qnorm( 1 - (alpha) / 2 ) * se
   )
 
 # Print the result
@@ -316,10 +324,11 @@ df_q6
 **Observations**:
 
 -   Does your intervals include the true value of $\pi$?
-    -   (Bootstrap CI: **yes** or no?) Yes (3.12-3.32)
-    -   (CLT CI: yes or **no**?) No (3.22 -3.23)
+    -   (Bootstrap CI: **yes** or no?) Yes (3.14-3.32)
+    -   (CLT CI: yes or **no**?) Yes (3.13 -3.33)
 -   How closely do your bootstrap CI and CLT CI agree?
-    -   My CLT is within the wider bootstrap range
+    -   My bootstrap CI and CLT CI are almost the same, but the bootstrap has a slightly tighter range by 0.02!
+    -   They both contain pi
 -   Comment on the width of your CI(s). Would your estimate of $\pi$ be good enough for roughly estimating an area (e.g., to buy enough paint for an art project)? Would your estimate of $\pi$ be good enough for precisely calculating a trajectory (e.g., sending a rocket into orbit)?
     -   (Good enough as a rough estimate?)
         -   Yes, especially since the value I got was an overestimate

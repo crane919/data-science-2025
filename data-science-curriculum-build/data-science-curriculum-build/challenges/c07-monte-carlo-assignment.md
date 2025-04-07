@@ -248,8 +248,7 @@ Answer the questions below.
 ``` r
 ## TASK: Finish implementing this function
 stat <- function(x, y) {
-  map2_dbl(x, y, ~as.integer(.x^2 + .y^2 <= 1)) %>% 
-    mean() * 4
+  map2_dbl(x, y, ~as.integer(.x^2 + .y^2 <= 1)) *4
 }
 ```
 
@@ -311,14 +310,15 @@ Using your data in `df_q1`, estimate $\pi$.
 ``` r
 ## TASK: Estimate pi using your data from q1
 df_q3 <- df_q1 %>%
-  summarise(pi_est = stat(x, y))
+  mutate(pi_piece = stat(x,y)) %>%
+  summarise(pi_est = mean(pi_piece))
 df_q3
 ```
 
     ## # A tibble: 1 × 1
     ##   pi_est
     ##    <dbl>
-    ## 1   3.23
+    ## 1   3.06
 
 Use the following to check that you’ve used the correct variable names.
 (NB. This does not check correctness.)
@@ -375,7 +375,8 @@ df_q4 <-
       splits,
       function(split_df) {
         analysis(split_df) %>% 
-          summarise(pi_est = stat(x, y)) %>% 
+          mutate(pi_piece = stat(x,y)) %>%
+          summarise(pi_est = mean(pi_piece)) %>%
           pull(pi_est)
       }
     )
@@ -406,7 +407,7 @@ df_q4 %>%
     ```
 
         ##   25%   50%   75% 
-        ## 3.196 3.228 3.260
+        ## 3.028 3.066 3.100
 
 ### **q5** Bootstrap percentile confidence interval
 
@@ -424,8 +425,8 @@ alpha <- 0.05
 df_q5 <- 
   df_q4 %>% 
   summarize(
-    pi_lo = quantile(pi_est, probs = alpha / 2),  
-    pi_up = quantile(pi_est, probs = 1 - alpha / 2)
+    pi_lo = quantile(pi_est, probs = alpha/2),
+    pi_up = quantile(pi_est, probs = 1 - alpha/2)
   )
 
 print(df_q5)
@@ -434,7 +435,7 @@ print(df_q5)
     ## # A tibble: 1 × 2
     ##   pi_lo pi_up
     ##   <dbl> <dbl>
-    ## 1  3.13  3.33
+    ## 1  2.96  3.16
 
 ### **q6** CLT confidence interval
 
@@ -455,28 +456,37 @@ done something *wrong* in one of the tasks….
 alpha <- 0.05
 
 # Compute the CLT-based confidence interval for pi
-df_q6 <- df_q4 %>%
+df_q6 <- df_q1 %>%
+  mutate(stat = stat(x, y)) %>%
   summarize(
-    pi_lo = mean(pi_est) - qnorm(1 - alpha / 2) * sd(pi_est) / sqrt(n()),  # Lower bound
-    pi_up = mean(pi_est) + qnorm(1 - alpha / 2) * sd(pi_est) / sqrt(n())   # Upper bound
+    mean = mean(stat),
+    sd = sd(stat),
+    n = n()
+  ) %>%
+  mutate(
+    se = sd / sqrt(n),
+    pi_lo = mean - qnorm( 1 - (alpha) / 2 ) * se,
+    pi_up = mean + qnorm( 1 - (alpha) / 2 ) * se
   )
 
 # Print the result
 df_q6
 ```
 
-    ## # A tibble: 1 × 2
-    ##   pi_lo pi_up
-    ##   <dbl> <dbl>
-    ## 1  3.23  3.23
+    ## # A tibble: 1 × 6
+    ##    mean    sd     n     se pi_lo pi_up
+    ##   <dbl> <dbl> <int>  <dbl> <dbl> <dbl>
+    ## 1  3.06  1.69  1000 0.0536  2.96  3.17
 
 **Observations**:
 
 - Does your intervals include the true value of $\pi$?
-  - (Bootstrap CI: **yes** or no?) Yes (3.12-3.32)
-  - (CLT CI: yes or **no**?) No (3.22 -3.23)
+  - (Bootstrap CI: **yes** or no?) Yes (3.14-3.32)
+  - (CLT CI: yes or **no**?) Yes (3.13 -3.33)
 - How closely do your bootstrap CI and CLT CI agree?
-  - My CLT is within the wider bootstrap range
+  - My bootstrap CI and CLT CI are almost the same, but the bootstrap
+    has a slightly tighter range by 0.02!
+  - They both contain pi
 - Comment on the width of your CI(s). Would your estimate of $\pi$ be
   good enough for roughly estimating an area (e.g., to buy enough paint
   for an art project)? Would your estimate of $\pi$ be good enough for
