@@ -130,10 +130,12 @@ you still need to count, because your numbers *will* be different!
   - 96.7%
 - Are there any sources of *real* uncertainty in the percent occupied
   you calculated?
-  - No, since I counted the entire population of houses in Helvig
+  - Yes, even though I counted the entire population of houses in
+    Helvig, there can be uncertainty in that data as it isn’t static.
+    People can move and die, therefor changing the percentage over time.
 - Are there any sources of *erroneous* uncertainty in the percent
   occupied you calculated?
-  - No, since I didn’t make any assumptions in my data
+  - Yes, since I could have miscounted the number of empty houses.
 
 Zach looked at the first 25 homes in Helvig and recorded the `age` and
 `name` of every person in those homes. These people are provided in
