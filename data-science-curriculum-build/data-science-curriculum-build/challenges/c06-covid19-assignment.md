@@ -545,6 +545,7 @@ include in your summaries,* and justify why!
 # print(df_normalized)
 
 df_normalized %>% 
+  filter(date == max(date)) %>%
   filter(is.finite(cases_per100k)) %>%
   filter(is.finite(deaths_per100k)) %>%
   summarise(
@@ -558,9 +559,11 @@ df_normalized %>%
     ## # A tibble: 1 × 4
     ##   mean_cases_per100k sd_cases_per100k mean_deaths_per100k sd_deaths_per100k
     ##                <dbl>            <dbl>               <dbl>             <dbl>
-    ## 1             10094.            8484.                174.              159.
+    ## 1             24967.            6174.                375.              160.
 
 - Which rows did you pick?
+  - I picked the most recent date since it will have the cumulative
+    values for all the data
   - I picked rows that had a valid numerical values
 - Why?
   - Mean/sd doesn’t work if there is none valid number in it
@@ -642,6 +645,30 @@ df_normalized %>%
 
     ## [1] 98985.1
 
+``` r
+df_normalized %>%
+  filter(
+    state == "Texas",
+    county %in% c("Loving"),  
+    !is.na(fips)  # fct_reorder2 can choke with missing data
+  ) %>%
+  ggplot(aes(x = date)) + 
+  geom_line(aes(y = cases_per100k, color = county, linetype = "Cases per 100k")) +  
+  geom_line(aes(y = deaths_per100k, color = county, linetype = "Deaths per 100k")) + 
+  scale_y_log10(labels = scales::label_number(scale_cut = scales::cut_short_scale())) +
+  theme_minimal() +
+  labs(
+    x = "Date",
+    y = "Per 100,000 persons",
+    title = "Cases and Deaths per 100k in Loving Texas"
+  )
+```
+
+    ## Warning in scale_y_log10(labels = scales::label_number(scale_cut =
+    ## scales::cut_short_scale())): log-10 transformation introduced infinite values.
+
+![](c06-covid19-assignment_files/figure-gfm/q7-task-1.png)<!-- -->
+
 **Observations**:
 
 - Loving Texas is the only location to show up in both lists
@@ -661,6 +688,8 @@ df_normalized %>%
 - When did these “largest values” occur?
   - Loving Texas appears for both, generally small counties in Texas or
     Alaska
+  - For Loving Texas this started occuring around the start of 2022 as
+    seen in the graph above.
 
 ## Self-directed EDA
 
@@ -888,6 +917,13 @@ that’s in the middle of the state without a big city/large population.
   population), and Centre the lowest with a much smaller population.
   However at the end of 2020 Centre has a massive spike that makes it
   end up with the most cases
+
+- Comparing these 3 PA counties to the cases_per100k for all counties,
+  shows that having roughly 20k cases per 100k is around the most common
+  rate of cases (as seen by the frequency graph). Likewise the
+  death_per100k, shows that a range of 217-324 deaths per 100k is a
+  little bit less than the most common rate of deaths. This means that
+  these 3 PA counties have similar rates to the rest of the country.
 
 ``` r
 df_normalized %>%
