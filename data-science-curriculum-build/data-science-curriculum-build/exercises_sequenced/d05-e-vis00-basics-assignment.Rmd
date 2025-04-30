@@ -9,7 +9,7 @@ reading: 0
 
 # Vis: Data Visualization Basics
 
-*Purpose*: The most powerful way for us to learn about a dataset is to _visualize the data_. Throughout this class we will make extensive use of the _grammar of graphics_, a powerful graphical programming _grammar_ that will allow us to create just about any graph you can imagine!
+*Purpose*: The most powerful way for us to learn about a dataset is to *visualize the data*. Throughout this class we will make extensive use of the *grammar of graphics*, a powerful graphical programming *grammar* that will allow us to create just about any graph you can imagine!
 
 *Reading*: (None, this is the reading)
 
@@ -19,19 +19,25 @@ library(tidyverse)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### __q1__ Inspect a dataset
+### **q1** Inspect a dataset
 
 Inspect the `diamonds` dataset. What do the `cut`, `color`, and `clarity` variables mean?
+
+cut: quality of the diamond
+
+color: diamond color
+
+clarity: measurement of how clear the diamond is
 
 *Hint*: We learned how to inspect a dataset in `e-data-00-basics`!
 
 ```{r q1-task, eval=FALSE}
+?diamonds
 ```
 
-### __q2__ Standard checks
+### **q2** Standard checks
 
 Use your "standard checks" to determine what variables the dataset has.
-
 
 Now that we have the list of variables in the dataset, we know what we can visualize!
 
@@ -55,9 +61,9 @@ ggplot(            # 1. Starting a ggplot
 
 The core idea in ggplot is that we can break *every concievable plot* down into just a few elements:
 
-* Data (the `data` argument): The data to visualize
-* Geometries (or `geom_*()` functions): The visual elements we'll use to show the data
-* Mapping (the relationship between the data and the geometries)
+-   Data (the `data` argument): The data to visualize
+-   Geometries (or `geom_*()` functions): The visual elements we'll use to show the data
+-   Mapping (the relationship between the data and the geometries)
 
 Assuming we're not messing with the data[1], this implies that making a plot boils down to *choosing the geometries* and *mapping geometries to the data*. This is a bit abstract, but once you internalize this approach, *you can make virtually any plot you can imagine*.
 
@@ -65,7 +71,7 @@ Assuming we're not messing with the data[1], this implies that making a plot boi
 
 Let's practice: Adapt the code above to complet the task below.
 
-### __q3__ Make your first ggplot
+### **q3** Make your first ggplot
 
 Using `ggplot`, visualize `price` vs `carat` with points. What trend do you observe?
 
@@ -73,18 +79,17 @@ Using `ggplot`, visualize `price` vs `carat` with points. What trend do you obse
 
 ```{r q3-task}
 ## TODO: Complete this code
-ggplot(diamonds)
+ggplot(diamonds) +
+  geom_point(aes(x = carat, y = price))
 ```
 
 **Observations**:
 
-- (Write your observations here!)
+-   Price generally increases with carat
 
 ## A note on *aesthetics*
 
-The function `aes()` is short for *aesthetics*. Aesthetics in ggplot are the mapping of variables in a dataframe to visual elements in the graph. For instance, in the plot above you assigned `carat` to the `x` aesthetic, and `price` to the `y` aesthetic. But there are *many more* aesthetics you can set, some of which vary based on the `geom_` you are using to visualize. 
-
-
+The function `aes()` is short for *aesthetics*. Aesthetics in ggplot are the mapping of variables in a dataframe to visual elements in the graph. For instance, in the plot above you assigned `carat` to the `x` aesthetic, and `price` to the `y` aesthetic. But there are *many more* aesthetics you can set, some of which vary based on the `geom_` you are using to visualize.
 
 ```{r}
 ## NOTE: This is some more advanced code we'll learn to write later
@@ -103,11 +108,11 @@ diamonds %>%
 
 As with any R function, we can consult the documentation to learn more.
 
-### __q4__ Read the docs
+### **q4** Read the docs
 
 Look up the documentation for `geom_point()`, and scroll down to the *Aesthetics* section. What aesthetics (other than `x` and `y`) does `geom_point()` accept?
 
-### __q5__ Visualize a third variable
+### **q5** Visualize a third variable
 
 Adapt your code from q3 to visualize `price`, `carat`, and `cut` simultaneously.
 
@@ -115,15 +120,18 @@ Adapt your code from q3 to visualize `price`, `carat`, and `cut` simultaneously.
 
 ```{r q4-task}
 ## TODO: Complete this code
-ggplot(diamonds)
+ggplot(diamonds) +
+  geom_point(aes(x = carat, y = price, color =cut))
 ```
 
 **Observations**:
 
-- (Write your observations here!)
+-   (cut explains variation in price
 
 <!-- include-exit-ticket -->
+
 # Exit Ticket
+
 <!-- -------------------------------------------------- -->
 
 Once you have completed this exercise, make sure to fill out the **exit ticket survey**, [linked here](https://docs.google.com/forms/d/e/1FAIpQLSeuq2LFIwWcm05e8-JU84A3irdEL7JkXhMq5Xtoalib36LFHw/viewform?usp=pp_url&entry.693978880=e-vis00-basics-assignment.Rmd).

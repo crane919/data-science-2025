@@ -24,7 +24,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category | Needs Improvement | Satisfactory |
-|------------------|-----------------------------|-------------------------|
+|------------------------|------------------------|------------------------|
 | Effort | Some task **q**'s left unattempted | All task **q**'s attempted |
 | Observed | Did not document observations, or observations incorrect | Documented correct observations based on analysis |
 | Supported | Some observations not clearly supported by analysis | All observations clearly supported by analysis (table, graph, etc.) |
@@ -111,13 +111,13 @@ You may encounter difficulties in visualizing these data; if so document your ch
 gapminder %>% 
   filter(year == 1952) %>% 
   ggplot(aes(x = continent , y = gdpPercap)) +
-  geom_jitter() 
+  geom_jitter(height=0)
 
 ## removed the outlier to get a better look at the data
 gapminder %>% 
   filter(year == 1952, gdpPercap < 90000) %>% 
   ggplot(aes(x = continent , y = gdpPercap)) +
-  geom_jitter() 
+  geom_jitter(height=0)
 
 gapminder %>% 
   filter(year == 1952,  gdpPercap < 90000) %>% 
@@ -195,13 +195,14 @@ gapminder %>%
 gapminder %>% 
   filter(year == 1952 | year == 2007) %>% 
   ggplot(aes(x = continent , y = gdpPercap)) +
-  geom_jitter(
+  geom_jitter(height=0,
+              width=.35,
     data = . %>% 
       mutate(
         country = case_when(
           country %in% c("Kuwait", "Switzerland", "United States") ~ country,
           TRUE ~ "(other)"
-        )
+          )
       ),
     mapping = aes(color = country)
   ) +
@@ -220,7 +221,7 @@ gapminder %>%
 
 **Observations**:
 
--   Overall lots of countries have increased their gdpPercap, likely due to inflation.
+-   Overall lots of countries have increased their gdpPercap, this is likely due to a multitude of factors including inflation and productivity increases that started in the 1950s. The productivity increases were caused by technological advances, and increased automation. (<https://www.bls.gov/opub/mlr/1993/11/art1full.pdf>)
 -   Kuwait has dramatically decreased its gpdPercap from 108382.35 to 47306.99, and is no longer an extreme outlier as it no longer has the highest gpdPercap and there are several countries with similar values.
 -   US remains country with the highest gpdPercap in the Americas. It's gpdPercap has increased from 13990.48 to 42951.65.
 -   Switzerland has the 2nd highest gpdPercap of all the countries or the highest of Europe. However, it still has a relatively high gpdPercap as its not the 7th highest country. It's gpdPercap has increased from 14734.23 to 37506.42
@@ -252,7 +253,7 @@ gapminder %>%
 gapminder %>% 
   filter(year == 1952 | year == 2007) %>% 
   ggplot(aes(x = continent , y = pop)) +
-  geom_jitter(
+  geom_jitter( height=0,
     data = . %>% 
       mutate(
         country = case_when(
@@ -285,6 +286,7 @@ gapminder %>%
     )
   ) +
   facet_wrap(~ year) +
+  scale_y_log10() +
   labs(color = "Country/Line")
 
 
@@ -300,7 +302,7 @@ gapminder %>%
 gapminder %>% 
   filter(country == "Kuwait" ) %>% 
   ggplot(aes(x = year , y = gdpPercap)) +
-  geom_jitter() 
+  geom_point()
 ```
 
 -   Graph shows the gpdPercap in Kuwait from 1950 to 2007

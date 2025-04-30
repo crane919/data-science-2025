@@ -1,7 +1,7 @@
 ---
 title: "Michelson Speed-of-light Measurements"
-author: "(Your name here)"
-date: 2020-
+author: "Maya Cranor"
+date: 2025-2-11
 output: 
   github_document:
     toc: true
@@ -14,17 +14,20 @@ prerequisites:
 *Reading*: [Experimental Determination of the Velocity of Light](https://play.google.com/books/reader?id=343nAAAAMAAJ&hl=en&pg=GBS.PA115) (Optional)
 
 <!-- include-rubric -->
+
 # Grading Rubric
+
 <!-- -------------------------------------------------- -->
 
 Unlike exercises, **challenges will be graded**. The following rubrics define how you will be graded, both on an individual and team basis.
 
 ## Individual
+
 <!-- ------------------------- -->
 
 | Category | Needs Improvement | Satisfactory |
-|----------|----------------|--------------|
-| Effort | Some task __q__'s left unattempted | All task __q__'s attempted |
+|----|----|----|
+| Effort | Some task **q**'s left unattempted | All task **q**'s attempted |
 | Observed | Did not document observations, or observations incorrect | Documented correct observations based on analysis |
 | Supported | Some observations not clearly supported by analysis | All observations clearly supported by analysis (table, graph, etc.) |
 | Assessed | Observations include claims not supported by the data, or reflect a level of certainty not warranted by the data | Observations are appropriately qualified by the quality & relevance of the data and (in)conclusiveness of the support |
@@ -32,10 +35,10 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 | Code Styled | Violations of the [style guide](https://style.tidyverse.org/) hinder readability | Code sufficiently close to the [style guide](https://style.tidyverse.org/) |
 
 ## Submission
+
 <!-- ------------------------- -->
 
 Make sure to commit both the challenge report (`report.md` file) and supporting files (`report_files/` folder) when you are done! Then submit a link to Canvas. **Your Challenge submission is not complete without all files uploaded to GitHub.**
-
 
 ```{r message=FALSE, warning=FALSE}
 # Libraries
@@ -70,84 +73,79 @@ df_michelson %>% glimpse()
 
 *Data dictionary*:
 
-- `Date`: Date of measurement
-- `Distinctness`: Distinctness of measured images: 3 = good, 2 = fair, 1 = poor
-- `Temp`: Ambient temperature (Fahrenheit)
-- `Velocity`: Measured speed of light (km / s)
+-   `Date`: Date of measurement
+-   `Distinctness`: Distinctness of measured images: 3 = good, 2 = fair, 1 = poor
+-   `Temp`: Ambient temperature (Fahrenheit)
+-   `Velocity`: Measured speed of light (km / s)
 
-### __q1__ Re-create the following table (from Michelson (1880), pg. 139) using `df_michelson` and `dplyr`. Note that your values *will not* match those of Michelson *exactly*; why might this be?
+### **q1** Re-create the following table (from Michelson (1880), pg. 139) using `df_michelson` and `dplyr`. Note that your values *will not* match those of Michelson *exactly*; why might this be?
 
-| Distinctness | n  | MeanVelocity |
-|--------------|----|----------|
-|            3 | 46 |   299860 |
-|            2 | 39 |   299860 |
-|            1 | 15 |   299810 |
+| Distinctness | n   | MeanVelocity |
+|--------------|-----|--------------|
+| 3            | 46  | 299860       |
+| 2            | 39  | 299860       |
+| 1            | 15  | 299810       |
 
 ```{r q1-task}
 ## TODO: Compute summaries
-df_q1 <- NA
+df_q1 <- 
+  df_michelson %>% 
+    group_by(Distinctness) %>% 
+    summarize(
+      n = n(),
+      MeanVelocity = mean(Velocity, na.rm = TRUE),
+    )
 df_q1 %>%
   arrange(desc(Distinctness)) %>%
   knitr::kable()
 ```
 
-**Observations**:
-- Write your observations here!
-  - (Your response here)
-- Why might your table differ from Michelson's?
-  - (Your response here)
+**Observations**: - Write your observations here! - (Your response here) - Why might your table differ from Michelson's? - (Your response here)
 
-The `Velocity` values in the dataset are the speed of light *in air*; Michelson
-introduced a couple of adjustments to estimate the speed of light in a vacuum.
-In total, he added $+92$ km/s to his mean estimate for `VelocityVacuum` (from
-Michelson (1880), pg. 141). While the following isn't fully rigorous ($+92$ km/s
-is based on the mean temperature), we'll simply apply this correction to all the
-observations in the dataset.
+Most of the recorded data is distinctness 3, and there is less distinctness 1 data. That makes sense because poor data measurement would be avoided if possible. The mean velocities are pretty similar between the three categories and especially between 3 and 2. Category 1 is slightly slower, but there is also less data points which could account from it being farther from 3 and 2.
 
-### __q2__ Create a new variable `VelocityVacuum` with the $+92$ km/s adjustment to `Velocity`. Assign this new dataframe to `df_q2`.
+My table might differ from Michelson's because of rounding or significant figures. Since Distinctiveness 3 and 2 on Michelson's have the same value, we know that Michelson thought they were the same.
+
+The `Velocity` values in the dataset are the speed of light *in air*; Michelson introduced a couple of adjustments to estimate the speed of light in a vacuum. In total, he added $+92$ km/s to his mean estimate for `VelocityVacuum` (from Michelson (1880), pg. 141). While the following isn't fully rigorous ($+92$ km/s is based on the mean temperature), we'll simply apply this correction to all the observations in the dataset.
+
+### **q2** Create a new variable `VelocityVacuum` with the $+92$ km/s adjustment to `Velocity`. Assign this new dataframe to `df_q2`.
 
 ```{r q2-task}
 ## TODO: Adjust the data, assign to df_q2
-df_q2 <- NA
+df_q2 <- 
+  df_michelson %>% 
+  mutate(VelocityVacuum = Velocity + 92)
 
-df_q2
+
 ```
 
-As part of his study, Michelson assessed the various potential sources of error,
-and provided his best-guess for the error in his speed-of-light estimate. These
-values are provided in `LIGHTSPEED_MICHELSON`---his nominal estimate---and
-`LIGHTSPEED_PM`---plus/minus bounds on his estimate. Put differently, Michelson
-believed the true value of the speed-of-light probably lay between
-`LIGHTSPEED_MICHELSON - LIGHTSPEED_PM` and `LIGHTSPEED_MICHELSON +
-LIGHTSPEED_PM`.
+As part of his study, Michelson assessed the various potential sources of error, and provided his best-guess for the error in his speed-of-light estimate. These values are provided in `LIGHTSPEED_MICHELSON`---his nominal estimate---and `LIGHTSPEED_PM`---plus/minus bounds on his estimate. Put differently, Michelson believed the true value of the speed-of-light probably lay between `LIGHTSPEED_MICHELSON - LIGHTSPEED_PM` and `LIGHTSPEED_MICHELSON + LIGHTSPEED_PM`.
 
 Let's introduce some terminology:[2]
 
-- **Error** is the difference between a true value and an estimate of that
-  value; for instance `LIGHTSPEED_VACUUM - LIGHTSPEED_MICHELSON`.
-- **Uncertainty** is an analyst's *assessment* of the error.
+-   **Error** is the difference between a true value and an estimate of that value; for instance `LIGHTSPEED_VACUUM - LIGHTSPEED_MICHELSON`.
+-   **Uncertainty** is an analyst's *assessment* of the error.
 
-Since a "true" value is often not known in practice, one generally does not know
-the error. The best they can do is quantify their degree of uncertainty. We will
-learn some means of quantifying uncertainty in this class, but for many real
-problems uncertainty includes some amount of human judgment.[2]
+Since a "true" value is often not known in practice, one generally does not know the error. The best they can do is quantify their degree of uncertainty. We will learn some means of quantifying uncertainty in this class, but for many real problems uncertainty includes some amount of human judgment.[2]
 
-### __q3__ Compare Michelson's speed of light estimate against the modern speed of light value. Is Michelson's estimate of the error (his uncertainty) greater or less than the true error?
+### **q3** Compare Michelson's speed of light estimate against the modern speed of light value. Is Michelson's estimate of the error (his uncertainty) greater or less than the true error?
+
+\# Your code here!
 
 ```{r q3-task}
 ## TODO: Compare Michelson's estimate and error against the true value
-## Your code here!
+
+ERROR <- LIGHTSPEED_VACUUM - LIGHTSPEED_MICHELSON
+ERROR
 ```
 
-**Observations**:
-- Is Michelson's estimate of the error (his uncertainty) greater or less than the true error?
-  - (Your response here)
-- Make a quantitative comparison between Michelson's uncertainty and his error.
-  - (Your response here)
+**Observations**: - Is Michelson's estimate of the error (his uncertainty) greater or less than the true error? - Michelson's actual error is greater than the Michelson's error estimate of 51; It's roughly 3 times bigger.
+
+\- Make a quantitative comparison between Michelson's uncertainty and his error. - The actual error is 2.97141176471 more than Michelson's error estimate.
 
 The following plot shows all of Michelson's data as a [control chart](https://en.wikipedia.org/wiki/Control_chart); this sort of plot is common in manufacturing, where it is used to help determine if a manufacturing process is under [statistical control](https://en.wikipedia.org/wiki/Statistical_process_control). Each dot is one of Michelson's measurements, and the grey line connects the mean taken for each day. The same plot also shows simulated data using a probability model. We'll get into statistics later in the course; for now, let's focus on understanding what real and simulated data tend to look like.
 
-### __q4__ Inspect the following plot with the `Real` Michelson data and `Simulated` data from a probability model. Document the similarities and differences between the data under *observe* below.
+### **q4** Inspect the following plot with the `Real` Michelson data and `Simulated` data from a probability model. Document the similarities and differences between the data under *observe* below.
 
 ```{r q4-cf-real-simulated}
 ## Note: No need to edit this chunk!
@@ -206,22 +204,36 @@ df_q2 %>%
   )
 ```
 
-**Observations**:
-Similarities
-- (your responses here)
-Differences
-- (your responses here)
+**Observations**: Similarities - The mean and the positive and negative data values are roughly the same. The mean taken for each day tends to fall between the two dashed lines. Additionally most of the means except 2-3 fall between the dashed lines for both real and simulated data.
 
-### __q5__ You have access to a few other variables. Construct a **at least three** visualizations of `VelocityVacuum` against these other factors. Are there other patterns in the data that might help explain the difference between Michelson's estimate and `LIGHTSPEED_VACUUM`?
+Differences - There are more above the dotted lines data values in the beginning of the table in the real data compared to the simulated. There are more data points below the dotted line around Jun 16th - Jun 23rd.
 
-**Observations**:
+Overall I would say the data is more similar than different, since the means are very similar.
 
-- Make sure to record observations on your graphs!
+### **q5** You have access to a few other variables. Construct a **at least three** visualizations of `VelocityVacuum` against these other factors. Are there other patterns in the data that might help explain the difference between Michelson's estimate and `LIGHTSPEED_VACUUM`?
 
+```{r}
+df_q2 %>% 
+  ggplot() +
+  geom_point(aes(x = Temp, y = VelocityVacuum, color = Distinctness)) +
+  geom_smooth(aes(x = Temp, y = VelocityVacuum), method = "lm", se = FALSE, color = "black")
 
+df_q2 %>% 
+  ggplot() +
+  geom_point(aes(x = Date, y = Temp, color = Distinctness))
+df_q2 %>% 
+  ggplot(aes(x = Distinctness, y = Velocity)) +
+  geom_boxplot()
+```
+
+### **Observations**:
+
+-   Graph #1: There is a very slight trend towards higher temperatures leading to a higher velocity. However, the data has high spread across the temperatures, making this an extremely weak trend. Temperature also doesn't appear to affect Distinctness in this graph as all three levels of distinctness happen throughout the temperature readings.
+-   Graph #2: This graph shows the temperature vs the date, with each data point being colored for distinctness. It appears that the distinctness is related to the day the data was collected, as most days have all the same level of distinctness and there is never a day where a data recording of 1 and 3 appear together. This could be because the set up of the experiment was done better that day or different people were running the experiment on different days.
+-   Graph #3: This graph shows that the more distinct the recording is the higher velocity it has, as the median value is the highest for 3 and lowest for 1. Distinctness 2 and 3 have a fairly similar range and median, while distinctness 1's velocity values are lower. That implies that distinctness level 2 data quality is good enough while distinctness level 1 is not.
 
 ## Bibliography
 
-- [1] Michelson, [Experimental Determination of the Velocity of Light](https://play.google.com/books/reader?id=343nAAAAMAAJ&hl=en&pg=GBS.PA115) (1880)
-- [2] Henrion and Fischhoff, [Assessing Uncertainty in Physical Constants](https://www.cmu.edu/epp/people/faculty/research/Fischoff-Henrion-Assessing%20uncertainty%20in%20physical%20constants.pdf) (1986)
-- [3] BYU video about a [Fizeau-Foucault apparatus](https://www.youtube.com/watch?v=Ik5ORaaeaME), similar to what Michelson used.
+-   [1] Michelson, [Experimental Determination of the Velocity of Light](https://play.google.com/books/reader?id=343nAAAAMAAJ&hl=en&pg=GBS.PA115) (1880)
+-   [2] Henrion and Fischhoff, [Assessing Uncertainty in Physical Constants](https://www.cmu.edu/epp/people/faculty/research/Fischoff-Henrion-Assessing%20uncertainty%20in%20physical%20constants.pdf) (1986)
+-   [3] BYU video about a [Fizeau-Foucault apparatus](https://www.youtube.com/watch?v=Ik5ORaaeaME), similar to what Michelson used.
